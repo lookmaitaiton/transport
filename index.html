@@ -1,11 +1,62 @@
 <!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <base target="_top">
+    
+    <title>LOOKMAI TAITON - ขนส่ง</title>
+    
+    <!-- กำหนดค่า Theme Color ให้เป็นโทนมืดเข้ากับไอคอน -->
+    <meta name="theme-color" content="#0B1121">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ขนส่งลูกไม้">
 
-<html>
-   <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-      <base target="_top">
-   </head>
-   <body>
-      <iframe style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;border: 0;" src="https://script.google.com/macros/s/AKfycbz3qxZkLt-9BE6fo9JdXY9folxsFI9MA2dPOQIsyE7K6sgZNhBSEtSsqy8V2BamjsWuMA/exec"></iframe>
-   </body>
+    <script>
+        // ⭐️ เทคนิคพิเศษ: ใช้ SVG วาดพื้นหลังสี #0B1121 + ขอบมน (rx=120) และใส่รูปเดิมไว้ตรงกลาง
+        // ทำให้ไม่ต้องไปเข้าโปรแกรมแต่งรูป หรือแปลง Base64 ยาวๆ 
+        const svgIcon = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%230B1121'/%3E%3Cimage href='https://i.postimg.cc/xjsr1jJj/Lookmai.png' width='360' height='360' x='76' y='76'/%3E%3C/svg%3E";
+        
+        // 1. เปลี่ยน Favicon บน Tab ของเบราว์เซอร์
+        const iconLink = document.createElement('link');
+        iconLink.rel = 'icon';
+        iconLink.type = 'image/svg+xml';
+        iconLink.href = svgIcon;
+        document.head.appendChild(iconLink);
+
+        // 2. เปลี่ยน Apple Touch Icon (รูปไอคอนเวลาติดตั้งบนหน้าจอ iOS)
+        const appleIcon = document.createElement('link');
+        appleIcon.rel = 'apple-touch-icon';
+        appleIcon.href = svgIcon;
+        document.head.appendChild(appleIcon);
+
+        // 3. สร้าง Manifest สำหรับ PWA (รองรับ Chrome/Android) 
+        const myManifest = {
+            "name": "Lookmai Fleet",
+            "short_name": "Lookmai",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#0B1121",
+            "theme_color": "#0B1121",
+            "icons": [
+                {
+                    "src": svgIcon,
+                    "sizes": "192x192 512x512",
+                    "type": "image/svg+xml",
+                    "purpose": "any maskable"
+                }
+            ]
+        };
+        
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(myManifest));
+        document.head.appendChild(manifestLink);
+    </script>
+</head>
+<body style="margin: 0; padding: 0; overflow: hidden; background-color: #0B1121;">
+    <!-- โค้ด iframe ที่ดึงมาจาก Google Apps Script -->
+    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src="https://script.google.com/macros/s/AKfycbz3qxZkLt-9BE6fo9JdXY9folxsFI9MA2dPOQIsyE7K6sgZNhBSEtSsqy8V2BamjsWuMA/exec"></iframe>
+</body>
 </html>
