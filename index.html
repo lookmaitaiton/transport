@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" href="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png">
 
-    <!-- กำหนดค่า Theme Color ให้เป็นโทนสว่าง (สีขาว/เทาอ่อน) กลับไปเหมือนเดิม -->
+    <!-- กำหนดค่า Theme Color ให้เป็นโทนสว่าง -->
     <meta name="theme-color" content="#f8fafc">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -25,7 +25,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #f8fafc; /* เปลี่ยนเป็นโทนสีสว่าง */
+            background-color: #0B1121; /* เปลี่ยนเป็นโทนสีมืด */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -37,18 +37,17 @@
 
         /* แอนิเมชันสำหรับโลโก้ */
         .splash-logo {
-            width: 180px; /* ขนาดปกติเมื่อสิ้นสุด */
+            width: 280px; /* ขนาดปกติเมื่อสิ้นสุด (ปรับให้ใหญ่ขึ้น) */
             height: auto;
             opacity: 0;
             /* อนิเมชันเริ่มจากใหญ่จางๆ ค่อยๆ ชัดและเล็กลงช้าๆ */
             animation: logoReveal 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            border-radius: 24px; /* เผื่อให้ขอบมนนิดๆ ตอนโหลด (ถ้ารูปมีขอบเหลี่ยม) */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* เพิ่มเงาให้โลโก้ดูมีมิติบนพื้นสว่าง */
+            border-radius: 24px; 
         }
 
         @keyframes logoReveal {
             0% {
-                transform: scale(2.5);
+                transform: scale(3.5); /* เริ่มซูมจากขนาดใหญ่ขึ้นมาก */
                 opacity: 0;
             }
             15% {
@@ -69,10 +68,10 @@
 
     <script>
         // ⭐️ สร้าง Manifest สำหรับ PWA (รองรับ Chrome/Android) 
-        // ปรับแก้ให้ใช้รูปล่าสุด และเปลี่ยนสีพื้นหลัง/ธีม กลับมาเป็นสีสว่าง (#f8fafc)
+        // เปลี่ยนสีพื้นหลัง/ธีม กลับมาเป็นสีสว่าง (#f8fafc)
         const myManifest = {
             "name": "LOOKMAI TAITON - ขนส่ง",
-            "short_name": "Lookmai",
+            "short_name": "LOOKMAI",
             "start_url": ".",
             "display": "standalone",
             "background_color": "#f8fafc",
@@ -99,16 +98,16 @@
         document.head.appendChild(manifestLink);
     </script>
 </head>
-<!-- ปรับพื้นหลังบอดี้ให้เป็นสีสว่าง -->
+<!-- ปรับพื้นหลังบอดี้ให้เป็นสีสว่าง เพื่อไม่ให้กระทบกับตัวแอปพลิเคชันหลัก -->
 <body style="margin: 0; padding: 0; overflow: hidden; background-color: #f8fafc;">
     
-    <!-- ส่วนของหน้าโหลด (Splash Screen) ใช้รูปใหม่ที่ให้มา -->
+    <!-- ส่วนของหน้าโหลด (Splash Screen) ใช้รูปโลโก้เดิมและมีพื้นหลังสีมืดใน CSS -->
     <div id="splash-screen">
-        <img src="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png" alt="Lookmai Logo" class="splash-logo">
+        <img src="https://i.postimg.cc/xjsr1jJj/Lookmai.png" alt="Lookmai Logo" class="splash-logo">
     </div>
 
     <!-- โค้ด iframe ที่ดึงมาจาก Google Apps Script -->
-    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src="https://script.google.com/macros/s/AKfycbzVDm7LmU08wBqo5cNebf6c1FQM2u2wuRXcS3eG3u69LKo7iSmaiX22_yQGKvacfw3IuA/exec"></iframe>
+    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src="https://script.google.com/macros/s/AKfycbz3qxZkLt-9BE6fo9JdXY9folxsFI9MA2dPOQIsyE7K6sgZNhBSEtSsqy8V2BamjsWuMA/exec"></iframe>
 
     <!-- สคริปต์ควบคุมการซ่อนหน้าโหลด -->
     <script>
