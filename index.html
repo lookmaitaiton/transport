@@ -7,10 +7,14 @@
     
     <title>LOOKMAI TAITON - ขนส่ง</title>
     
-    <!-- กำหนดค่า Theme Color ให้เป็นโทนมืดเข้ากับไอคอน -->
-    <meta name="theme-color" content="#0B1121">
+    <!-- ⭐️ ไอคอนบนแท็บ (Favicon) ใช้รูปใหม่ที่คุณให้มา -->
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png">
+
+    <!-- กำหนดค่า Theme Color ให้เป็นโทนสว่าง (สีขาว/เทาอ่อน) กลับไปเหมือนเดิม -->
+    <meta name="theme-color" content="#f8fafc">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="ขนส่งลูกไม้">
 
     <style>
@@ -21,7 +25,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #0B1121; /* โทนสีมืดของระบบ */
+            background-color: #f8fafc; /* เปลี่ยนเป็นโทนสีสว่าง */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -38,6 +42,8 @@
             opacity: 0;
             /* อนิเมชันเริ่มจากใหญ่จางๆ ค่อยๆ ชัดและเล็กลงช้าๆ */
             animation: logoReveal 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            border-radius: 24px; /* เผื่อให้ขอบมนนิดๆ ตอนโหลด (ถ้ารูปมีขอบเหลี่ยม) */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* เพิ่มเงาให้โลโก้ดูมีมิติบนพื้นสว่าง */
         }
 
         @keyframes logoReveal {
@@ -62,36 +68,26 @@
     </style>
 
     <script>
-        // ⭐️ เทคนิคพิเศษ: ใช้ SVG วาดพื้นหลังสี #0B1121 + ขอบมน (rx=120) และใส่รูปเดิมไว้ตรงกลาง
-        // ทำให้ไม่ต้องไปเข้าโปรแกรมแต่งรูป หรือแปลง Base64 ยาวๆ 
-        const svgIcon = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%230B1121'/%3E%3Cimage href='https://i.postimg.cc/xjsr1jJj/Lookmai.png' width='360' height='360' x='76' y='76'/%3E%3C/svg%3E";
-        
-        // 1. เปลี่ยน Favicon บน Tab ของเบราว์เซอร์
-        const iconLink = document.createElement('link');
-        iconLink.rel = 'icon';
-        iconLink.type = 'image/svg+xml';
-        iconLink.href = svgIcon;
-        document.head.appendChild(iconLink);
-
-        // 2. เปลี่ยน Apple Touch Icon (รูปไอคอนเวลาติดตั้งบนหน้าจอ iOS)
-        const appleIcon = document.createElement('link');
-        appleIcon.rel = 'apple-touch-icon';
-        appleIcon.href = svgIcon;
-        document.head.appendChild(appleIcon);
-
-        // 3. สร้าง Manifest สำหรับ PWA (รองรับ Chrome/Android) 
+        // ⭐️ สร้าง Manifest สำหรับ PWA (รองรับ Chrome/Android) 
+        // ปรับแก้ให้ใช้รูปล่าสุด และเปลี่ยนสีพื้นหลัง/ธีม กลับมาเป็นสีสว่าง (#f8fafc)
         const myManifest = {
-            "name": "Lookmai Fleet",
+            "name": "LOOKMAI TAITON - ขนส่ง",
             "short_name": "Lookmai",
             "start_url": ".",
             "display": "standalone",
-            "background_color": "#0B1121",
-            "theme_color": "#0B1121",
+            "background_color": "#f8fafc",
+            "theme_color": "#f8fafc",
             "icons": [
                 {
-                    "src": svgIcon,
-                    "sizes": "192x192 512x512",
-                    "type": "image/svg+xml",
+                    "src": "https://i.postimg.cc/bNfwjxB4/Lookmai-final.png",
+                    "sizes": "192x192",
+                    "type": "image/png",
+                    "purpose": "any maskable"
+                },
+                {
+                    "src": "https://i.postimg.cc/bNfwjxB4/Lookmai-final.png",
+                    "sizes": "512x512",
+                    "type": "image/png",
                     "purpose": "any maskable"
                 }
             ]
@@ -103,11 +99,12 @@
         document.head.appendChild(manifestLink);
     </script>
 </head>
-<body style="margin: 0; padding: 0; overflow: hidden; background-color: #0B1121;">
+<!-- ปรับพื้นหลังบอดี้ให้เป็นสีสว่าง -->
+<body style="margin: 0; padding: 0; overflow: hidden; background-color: #f8fafc;">
     
-    <!-- ส่วนของหน้าโหลด (Splash Screen) -->
+    <!-- ส่วนของหน้าโหลด (Splash Screen) ใช้รูปใหม่ที่ให้มา -->
     <div id="splash-screen">
-        <img src="https://i.postimg.cc/xjsr1jJj/Lookmai.png" alt="Lookmai Logo" class="splash-logo">
+        <img src="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png" alt="Lookmai Logo" class="splash-logo">
     </div>
 
     <!-- โค้ด iframe ที่ดึงมาจาก Google Apps Script -->
