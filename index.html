@@ -13,6 +13,54 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="ขนส่งลูกไม้">
 
+    <style>
+        /* สไตล์สำหรับหน้าโหลด (Splash Screen) */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0B1121; /* โทนสีมืดของระบบ */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+        }
+
+        /* แอนิเมชันสำหรับโลโก้ */
+        .splash-logo {
+            width: 180px; /* ขนาดปกติเมื่อสิ้นสุด */
+            height: auto;
+            opacity: 0;
+            /* อนิเมชันเริ่มจากใหญ่จางๆ ค่อยๆ ชัดและเล็กลงช้าๆ */
+            animation: logoReveal 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes logoReveal {
+            0% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+            15% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* คลาสสำหรับสั่งให้หน้าโหลดจางหายไป */
+        .fade-out {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+    </style>
+
     <script>
         // ⭐️ เทคนิคพิเศษ: ใช้ SVG วาดพื้นหลังสี #0B1121 + ขอบมน (rx=120) และใส่รูปเดิมไว้ตรงกลาง
         // ทำให้ไม่ต้องไปเข้าโปรแกรมแต่งรูป หรือแปลง Base64 ยาวๆ 
@@ -56,7 +104,32 @@
     </script>
 </head>
 <body style="margin: 0; padding: 0; overflow: hidden; background-color: #0B1121;">
+    
+    <!-- ส่วนของหน้าโหลด (Splash Screen) -->
+    <div id="splash-screen">
+        <img src="https://i.postimg.cc/xjsr1jJj/Lookmai.png" alt="Lookmai Logo" class="splash-logo">
+    </div>
+
     <!-- โค้ด iframe ที่ดึงมาจาก Google Apps Script -->
     <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src="https://script.google.com/macros/s/AKfycbz3qxZkLt-9BE6fo9JdXY9folxsFI9MA2dPOQIsyE7K6sgZNhBSEtSsqy8V2BamjsWuMA/exec"></iframe>
+
+    <!-- สคริปต์ควบคุมการซ่อนหน้าโหลด -->
+    <script>
+        // ให้เวลาแอนิเมชันโลโก้แสดงและรอให้ iframe โหลดเสร็จเบื้องหลัง
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if (splash) {
+                    // สั่งให้หน้าโหลดจางหายไป
+                    splash.classList.add('fade-out');
+                    
+                    // หลังจากจางหายไปสมบูรณ์ (ประมาณ 0.8 วินาทีตามที่ตั้งใน CSS transition) ให้ลบโค้ดส่วนนี้ทิ้งเพื่อไม่ให้บังปุ่มกดต่างๆ
+                    setTimeout(() => {
+                        splash.remove();
+                    }, 800);
+                }
+            }, 2800); // ตั้งเวลาให้โชว์โลโก้นาน 2.8 วินาที
+        });
+    </script>
 </body>
 </html>
