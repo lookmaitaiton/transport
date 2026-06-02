@@ -7,17 +7,24 @@
     
     <title>LOOKMAI TAITON - ขนส่ง</title>
     
-    <!-- ⭐️ ไอคอนบนแท็บ (Favicon) ใช้รูปใหม่ที่คุณให้มา -->
     <link rel="icon" type="image/png" href="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png">
 
-    <!-- กำหนดค่า Theme Color ให้เป็นโทนสว่าง -->
-    <meta name="theme-color" content="#f8fafc">
+    <meta name="theme-color" content="#f8fafc" id="theme-color-meta">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="ขนส่งลูกไม้">
 
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f8fafc;
+            transition: background-color 0.3s ease;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
         /* สไตล์สำหรับหน้าโหลด (Splash Screen) */
         #splash-screen {
             position: fixed;
@@ -25,107 +32,191 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #0B1121; /* เปลี่ยนเป็นโทนสีมืด */
+            background-color: #f8fafc; 
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 99999;
             opacity: 1;
             visibility: visible;
-            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out, background-color 0.3s ease;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #0B1121 !important; }
+            #splash-screen { background-color: #0B1121 !important; }
+            #loading-status { color: #94a3b8 !important; }
         }
 
         /* แอนิเมชันสำหรับโลโก้ */
         .splash-logo {
-            width: 280px; /* ขนาดปกติเมื่อสิ้นสุด (ปรับให้ใหญ่ขึ้น) */
+            width: 280px; 
             height: auto;
             opacity: 0;
-            /* อนิเมชันเริ่มจากใหญ่จางๆ ค่อยๆ ชัดและเล็กลงช้าๆ */
             animation: logoReveal 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             border-radius: 24px; 
         }
 
         @keyframes logoReveal {
-            0% {
-                transform: scale(3.5); /* เริ่มซูมจากขนาดใหญ่ขึ้นมาก */
-                opacity: 0;
-            }
-            15% {
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(3.5); opacity: 0; }
+            15% { opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* คลาสสำหรับสั่งให้หน้าโหลดจางหายไป */
+        #loading-status {
+            margin-top: 24px;
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
         .fade-out {
             opacity: 0 !important;
             visibility: hidden !important;
         }
+
+        /* ปุ่มด่วนกู้ชีพมุมขวาล่าง */
+        #emergency-backup-btn {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 9999;
+            background-color: rgba(15, 23, 42, 0.6);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 14px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none; 
+        }
+        #emergency-backup-btn:hover {
+            background-color: rgba(37, 99, 235, 0.9);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+        }
     </style>
 
     <script>
-        // ⭐️ สร้าง Manifest สำหรับ PWA (รองรับ Chrome/Android) 
-        // เปลี่ยนสีพื้นหลัง/ธีม กลับมาเป็นสีสว่าง (#f8fafc)
-        const myManifest = {
-            "name": "LOOKMAI TAITON - ขนส่ง",
-            "short_name": "LOOKMAI",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#f8fafc",
-            "theme_color": "#f8fafc",
-            "icons": [
-                {
-                    "src": "https://i.postimg.cc/bNfwjxB4/Lookmai-final.png",
-                    "sizes": "192x192",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": "https://i.postimg.cc/bNfwjxB4/Lookmai-final.png",
-                    "sizes": "512x512",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                }
-            ]
-        };
-        
-        const manifestLink = document.createElement('link');
-        manifestLink.rel = 'manifest';
-        manifestLink.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(myManifest));
-        document.head.appendChild(manifestLink);
-    </script>
-</head>
-<!-- ปรับพื้นหลังบอดี้ให้เป็นสีสว่าง เพื่อไม่ให้กระทบกับตัวแอปพลิเคชันหลัก -->
-<body style="margin: 0; padding: 0; overflow: hidden; background-color: #f8fafc;">
-    
-    <!-- ส่วนของหน้าโหลด (Splash Screen) ใช้รูปโลโก้เดิมและมีพื้นหลังสีมืดใน CSS -->
-    <div id="splash-screen">
-        <img src="https://i.postimg.cc/xjsr1jJj/Lookmai.png" alt="Lookmai Logo" class="splash-logo">
-    </div>
+        // ตั้งค่าตัวแปรลิงก์ของทั้ง 2 เมลล์
+        const PRIMARY_URL = "https://script.google.com/macros/s/AKfycbz3qxZkLt-9BE6fo9JdXY9folxsFI9MA2dPOQIsyE7K6sgZNhBSEtSsqy8V2BamjsWuMA/exec";
+        const BACKUP_URL = "https://script.google.com/macros/s/AKfycbwNbtabY6qHYHFcw0A3aHwDQXkYhC5z71gfsegKiMyVSYI8bzqlkhRP8u3hQ3biqwwj/exec";
 
-    <!-- โค้ด iframe ที่ดึงมาจาก Google Apps Script -->
-    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src="https://script.google.com/macros/s/AKfycbzVDm7LmU08wBqo5cNebf6c1FQM2u2wuRXcS3eG3u69LKo7iSmaiX22_yQGKvacfw3IuA/exec"></iframe>
+        let isAppReady = false;
+        let fallbackTimer;
 
-    <!-- สคริปต์ควบคุมการซ่อนหน้าโหลด -->
-    <script>
-        // ให้เวลาแอนิเมชันโลโก้แสดงและรอให้ iframe โหลดเสร็จเบื้องหลัง
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
+        // 1. รับสัญญาณจากระบบด้านใน iframe ว่า "โหลดสำเร็จจริงๆ นะ ไม่ใช่หน้า Error"
+        window.addEventListener('message', (event) => {
+            if (event.data === 'LOOKMAI_APP_READY') {
+                isAppReady = true;
+                clearTimeout(fallbackTimer);
+                
                 const splash = document.getElementById('splash-screen');
                 if (splash) {
-                    // สั่งให้หน้าโหลดจางหายไป
                     splash.classList.add('fade-out');
-                    
-                    // หลังจากจางหายไปสมบูรณ์ (ประมาณ 0.8 วินาทีตามที่ตั้งใน CSS transition) ให้ลบโค้ดส่วนนี้ทิ้งเพื่อไม่ให้บังปุ่มกดต่างๆ
                     setTimeout(() => {
                         splash.remove();
+                        const emergencyBtn = document.getElementById('emergency-backup-btn');
+                        if (emergencyBtn) emergencyBtn.style.display = 'block';
                     }, 800);
                 }
-            }, 2800); // ตั้งเวลาให้โชว์โลโก้นาน 2.8 วินาที
+            }
         });
+
+        // 2. ฟังก์ชันสั่งสลับไปลิงก์สำรอง (เมื่อรอจนหมดเวลา หรือผู้ใช้กดปุ่ม)
+        function switchToBackup(isManual = false) {
+            const iframe = document.getElementById('main-iframe');
+            if (iframe && iframe.src !== BACKUP_URL) {
+                iframe.src = BACKUP_URL;
+                
+                const statusText = document.getElementById('loading-status');
+                if (statusText) {
+                    statusText.innerText = isManual 
+                        ? "กำลังสลับไปคลังสำรองตามคำขอ..." 
+                        : "ลิงก์หลักขัดข้อง กำลังเชื่อมต่อลิงก์สำรองอัตโนมัติ...";
+                }
+                
+                if (isManual && !document.getElementById('splash-screen')) {
+                    location.reload(); 
+                    localStorage.setItem('use_backup_once', 'true');
+                } else {
+                    // รอลิงก์สำรองอีก 8 วินาที ถ้ายังเงียบอีก ให้เปิดม่านโชว์หน้าจอ Error ไปเลย
+                    isAppReady = false;
+                    clearTimeout(fallbackTimer);
+                    fallbackTimer = setTimeout(() => {
+                        if (!isAppReady) {
+                            const splash = document.getElementById('splash-screen');
+                            if (splash) {
+                                splash.classList.add('fade-out');
+                                setTimeout(() => splash.remove(), 800);
+                            }
+                            const emergencyBtn = document.getElementById('emergency-backup-btn');
+                            if (emergencyBtn) emergencyBtn.style.display = 'block';
+                        }
+                    }, 8000);
+                }
+            }
+        }
+
+        // 3. เริ่มต้นระบบเมื่อโหลดหน้าครอบเสร็จ
+        window.addEventListener('DOMContentLoaded', () => {
+            const iframe = document.getElementById('main-iframe');
+            if (localStorage.getItem('use_backup_once') === 'true') {
+                iframe.src = BACKUP_URL;
+                localStorage.removeItem('use_backup_once');
+                const statusText = document.getElementById('loading-status');
+                if (statusText) statusText.innerText = "กำลังเข้าสู่ระบบผ่านลิงก์สำรอง...";
+                
+                fallbackTimer = setTimeout(() => {
+                    if (!isAppReady) {
+                        const splash = document.getElementById('splash-screen');
+                        if (splash) splash.classList.add('fade-out');
+                    }
+                }, 8000);
+            } else {
+                iframe.src = PRIMARY_URL;
+                // ⭐️ ตั้งเวลาจับ 6 วินาทีสำหรับลิงก์แรก ถ้าไม่มีสัญญาณว่ารอด ให้หนีไปลิงก์สำรอง
+                fallbackTimer = setTimeout(() => {
+                    if (!isAppReady) {
+                        switchToBackup(false);
+                    }
+                }, 6000);
+            }
+        });
+
+        // ระบบสลับสีแถบด้านบนเบราว์เซอร์ตามโหมดเครื่อง
+        function updateThemeColor(e) {
+            const isDark = e.matches;
+            const metaTheme = document.getElementById('theme-color-meta');
+            if (metaTheme) metaTheme.setAttribute('content', isDark ? '#0B1121' : '#f8fafc');
+        }
+        if (window.matchMedia) {
+            const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            updateThemeColor(colorSchemeQuery);
+            colorSchemeQuery.addEventListener('change', updateThemeColor);
+        }
     </script>
+</head>
+<body>
+    
+    <div id="splash-screen">
+        <img src="https://i.postimg.cc/xjsr1jJj/Lookmai.png" alt="Lookmai Logo" class="splash-logo">
+        <div id="loading-status">กำลังเชื่อมต่อระบบจัดการขนส่ง...</div>
+    </div>
+
+    <!-- ปุ่มกู้ชีพมุมขวาล่าง จะซ่อนอยู่และโผล่มาหลังโหลดเสร็จ -->
+    <button id="emergency-backup-btn" onclick="switchToBackup(true)">🔄 สลับลิงก์สำรอง</button>
+
+    <!-- ไอเฟรม เอา onload เดิมออก เพื่อใช้ระบบ Ping แทน -->
+    <iframe id="main-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src=""></iframe>
+
 </body>
 </html>
