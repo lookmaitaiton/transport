@@ -170,8 +170,10 @@
         window.addEventListener('DOMContentLoaded', () => {
             const iframe = document.getElementById('main-iframe');
             
-            // เผื่อสัญญาณ Ping ขัดข้อง ให้ใช้ onload ปิดหน้าจอโหลด
-            iframe.onload = showAppAndButton;
+            // ⭐️ ล็อกเวลาไว้ 2 วินาที (2000 ms) ให้โลโก้ Fade in สวยๆ จนเสร็จก่อน ค่อยเปิดเข้าเว็บ
+            iframe.onload = () => {
+                setTimeout(showAppAndButton, 2000); 
+            };
 
             // หน่วงเวลา 8 วินาที: ถ้าระบบช้าหรือล่ม ก็ให้ปิดหน้าโหลดโชว์ปุ่มสลับลิงก์ให้กดเสมอ
             setTimeout(showAppAndButton, 8000);
