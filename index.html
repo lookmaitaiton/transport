@@ -217,6 +217,23 @@
 
     <!-- ไอเฟรม เอา onload เดิมออก เพื่อใช้ระบบ Ping แทน -->
     <iframe id="main-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src=""></iframe>
+    <script>
+    // แจ้งเตือนเมื่อเน็ตหลุด
+    window.addEventListener('offline', () => {
+        const statusText = document.getElementById('loading-status');
+        if(statusText) {
+            statusText.innerText = "❌ ขาดการเชื่อมต่ออินเทอร์เน็ต กรุณาลองใหม่...";
+            statusText.style.color = "#ef4444"; // เปลี่ยนเป็นสีแดง
+        } else {
+            alert("ขาดการเชื่อมต่ออินเทอร์เน็ต");
+        }
+    });
+
+    // รีเฟรชเมื่อเน็ตกลับมา
+    window.addEventListener('online', () => {
+        location.reload();
+    });
+</script>
 
 </body>
 </html>
