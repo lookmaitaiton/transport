@@ -7,9 +7,10 @@
     
     <title>LOOKMAI TAITON - ขนส่ง</title>
     
-    <link rel="icon" type="image/png" href="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png">
-    <link rel="apple-touch-icon" href="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png">
-
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiU21hcnQgRmxlZXQgTG9va21haSIsInNob3J0X25hbWUiOiJMb29rbWFpIEZsZWV0Iiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmOGZhZmMiLCJ0aGVtZV9jb2xvciI6IiMwQjExMjEiLCJpY29ucyI6W3sic3JjIjoibG9nby5wbmciLCJzaXplcyI6IjE5MngxOTIiLCJ0eXBlIjoiaW1hZ2UvcG5nIn0seyJzcmMiOiJsb2dvLnBuZyIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9wbmcifV19">
+    
     <meta name="theme-color" content="#f8fafc" id="theme-color-meta">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -342,6 +343,9 @@
     <div id="splash-screen">
         <img src="https://i.postimg.cc/xjsr1jJj/Lookmai.png" alt="Lookmai Logo" class="splash-logo">
         <div id="loading-status">กำลังเชื่อมต่อระบบจัดการขนส่ง...</div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
     </div>
 
     <!-- ปุ่มกู้ชีพมุมขวาล่าง จะซ่อนอยู่และโผล่มาหลังโหลดเสร็จ -->
@@ -366,7 +370,20 @@
         location.reload();
     });
 </script>
-
+<script>
+        // ระบบ PWA เพื่อให้ขึ้นปุ่ม Add to Home Screen (ติดตั้งเป็นแอป) บนมือถือ/คอมพิวเตอร์
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    self.addEventListener('install', (e) => { self.skipWaiting(); });
+                    self.addEventListener('activate', (e) => { e.waitUntil(self.clients.claim()); });
+                    self.addEventListener('fetch', (e) => { /* Bypass */ });
+                `;
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(console.error);
+            });
+        }
+    </script>
 </body>
 </html>
 </head>
