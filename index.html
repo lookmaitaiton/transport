@@ -105,6 +105,113 @@
         }
     </style>
 
+  <!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <base target="_top">
+    
+    <title>LOOKMAI TAITON - ขนส่ง</title>
+    
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/bNfwjxB4/Lookmai-final.png">
+
+    <meta name="theme-color" content="#f8fafc" id="theme-color-meta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ขนส่งลูกไม้">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f8fafc;
+            transition: background-color 0.3s ease;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        /* สไตล์สำหรับหน้าโหลด (Splash Screen) */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #f8fafc; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out, background-color 0.3s ease;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #0B1121 !important; }
+            #splash-screen { background-color: #0B1121 !important; }
+            #loading-status { color: #94a3b8 !important; }
+        }
+
+        /* แอนิเมชันสำหรับโลโก้ */
+        .splash-logo {
+            width: 280px; 
+            height: auto;
+            opacity: 0;
+            animation: logoReveal 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            border-radius: 24px; 
+        }
+
+        @keyframes logoReveal {
+            0% { transform: scale(3.5); opacity: 0; }
+            15% { opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #loading-status {
+            margin-top: 24px;
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .fade-out {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+
+        /* ปุ่มด่วนกู้ชีพมุมขวาล่าง */
+        #emergency-backup-btn {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 9999;
+            background-color: rgba(15, 23, 42, 0.6);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 14px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none; 
+        }
+        #emergency-backup-btn:hover {
+            background-color: rgba(37, 99, 235, 0.9);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+        }
+    </style>
+
     <script>
         // ตั้งค่าตัวแปรลิงก์ของทั้ง 2 เมลล์
         const PRIMARY_URL = "https://script.google.com/macros/s/AKfycbz3qxZkLt-9BE6fo9JdXY9folxsFI9MA2dPOQIsyE7K6sgZNhBSEtSsqy8V2BamjsWuMA/exec";
@@ -204,6 +311,39 @@
             colorSchemeQuery.addEventListener('change', updateThemeColor);
         }
     </script>
+</head>
+<body>
+    
+    <div id="splash-screen">
+        <img src="https://i.postimg.cc/xjsr1jJj/Lookmai.png" alt="Lookmai Logo" class="splash-logo">
+        <div id="loading-status">กำลังเชื่อมต่อระบบจัดการขนส่ง...</div>
+    </div>
+
+    <!-- ปุ่มกู้ชีพมุมขวาล่าง จะซ่อนอยู่และโผล่มาหลังโหลดเสร็จ -->
+    <button id="emergency-backup-btn" onclick="switchToBackup(true)">🔄 สลับลิงก์สำรอง</button>
+
+    <!-- ไอเฟรม เอา onload เดิมออก เพื่อใช้ระบบ Ping แทน -->
+    <iframe id="main-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src=""></iframe>
+    <script>
+    // แจ้งเตือนเมื่อเน็ตหลุด
+    window.addEventListener('offline', () => {
+        const statusText = document.getElementById('loading-status');
+        if(statusText) {
+            statusText.innerText = "❌ ขาดการเชื่อมต่ออินเทอร์เน็ต กรุณาลองใหม่...";
+            statusText.style.color = "#ef4444"; // เปลี่ยนเป็นสีแดง
+        } else {
+            alert("ขาดการเชื่อมต่ออินเทอร์เน็ต");
+        }
+    });
+
+    // รีเฟรชเมื่อเน็ตกลับมา
+    window.addEventListener('online', () => {
+        location.reload();
+    });
+</script>
+
+</body>
+</html>
 </head>
 <body>
     
