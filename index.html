@@ -241,9 +241,34 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    self.addEventListener('install', (e) => { self.skipWaiting(); });
-                    self.addEventListener('activate', (e) => { e.waitUntil(self.clients.claim()); });
-                    self.addEventListener('fetch', (e) => { /* Bypass */ });
+                    const CACHE_NAME = 'lookmai-cache-v1';
+                    const urlsToCache = [
+                        'https://lookmaitaiton.github.io/transport/logo.png',
+                        'https://lookmaitaiton.github.io/transport/icon.jpg'
+                    ];
+
+                    self.addEventListener('install', (e) => { 
+                        self.skipWaiting(); 
+                        e.waitUntil(
+                            caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+                        );
+                    });
+                    
+                    self.addEventListener('activate', (e) => { 
+                        e.waitUntil(self.clients.claim()); 
+                    });
+                    
+                    self.addEventListener('fetch', (e) => { 
+                        e.respondWith(
+                            caches.match(e.request).then((response) => {
+                                // ถ้ามีข้อมูลในแคช (เช่น โลโก้) ให้ดึงมาโชว์เลย ถ้าไม่มีให้โหลดจากเน็ต
+                                return response || fetch(e.request);
+                            }).catch(() => {
+                                // ดักจับกรณีเน็ตหลุด
+                                console.log("Offline mode triggered");
+                            })
+                        ); 
+                    });
                 `;
                 const blob = new Blob([swCode], { type: 'application/javascript' });
                 navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(console.error);
