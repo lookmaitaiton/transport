@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <base target="_top">
     
-    <title>LOOKMAI TAITON - ข้อมูลสินค้า</title>
+    <title>LOOKMAI TAITON - ระบบสรุปขนส่ง</title>
     
     <!-- ⭐️ แก้ไข: ใช้ลิงก์ตรงพร้อมตัวแก้แคช (?v=2) เพื่อบังคับให้เบราว์เซอร์ดึงไอคอนใหม่มาแสดงผลทันที -->
     <link rel="shortcut icon" href="https://lookmaitaiton.github.io/transport/logo.png?v=2" type="image/png">
@@ -17,7 +17,7 @@
     <meta name="theme-color" content="#f8fafc" id="theme-color-meta">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="ข้อมูลสินค้า">
+    <meta name="apple-mobile-web-app-title" content="ระบบสรุปขนส่ง">
 
     <style>
         body {
@@ -163,8 +163,11 @@
             location.reload(); 
         }
 
-        // รับสัญญาณ PING จากหน้าเว็บด้านใน (ถ้าระบบในเสร็จปุ๊บ สั่งโชว์เว็บเลย)
+       // รับสัญญาณ PING จากหน้าเว็บด้านใน (เช็คความปลอดภัยก่อนสั่งโชว์เว็บ)
         window.addEventListener('message', (event) => {
+            // ปรับเป็น 'script.google' เพื่อให้รองรับทั้ง .com และ .googleusercontent.com ของแท้จาก Google
+            if (!event.origin.includes('script.google')) return;
+            
             if (event.data === 'LOOKMAI_APP_READY') {
                 showAppAndButton();
             }
@@ -174,9 +177,9 @@
         window.addEventListener('DOMContentLoaded', () => {
             const iframe = document.getElementById('main-iframe');
             
-            // ⭐️ ล็อกเวลาไว้ 2 วินาที (2000 ms) ให้โลโก้ Fade in สวยๆ จนเสร็จก่อน ค่อยเปิดเข้าเว็บ
+            // ⭐️ เมื่อหน้าเว็บด้านในโหลดเสร็จ ให้สั่งปิดหน้าโหลด (Splash screen) ทันที
             iframe.onload = () => {
-                setTimeout(showAppAndButton, 2000); 
+                showAppAndButton(); 
             };
 
             // หน่วงเวลา 8 วินาที: ถ้าระบบช้าหรือล่ม ก็ให้ปิดหน้าโหลดโชว์ปุ่มสลับลิงก์ให้กดเสมอ
@@ -210,7 +213,7 @@
     
     <div id="splash-screen">
         <img src="https://lookmaitaiton.github.io/transport/logo.png" alt="Lookmai Logo" class="splash-logo">
-        <div id="loading-status">กำลังเชื่อมต่อระบบจัดการขนส่ง...</div>
+        <div id="loading-status">กำลังเชื่อมต่อระบบข้อมูลสินค้า...</div>
         <div class="progress-container">
             <div class="progress-bar"></div>
         </div>
@@ -232,7 +235,7 @@
             }
         });
 
-        // รีเฟรชเมื่อเน็ตกลับมา
+       // รีเฟรชเมื่อเน็ตกลับมา
         window.addEventListener('online', () => {
             location.reload();
         });
@@ -240,38 +243,9 @@
         // ⭐️ ระบบ PWA เพื่อให้ขึ้นปุ่ม Add to Home Screen (ติดตั้งเป็นแอป)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'lookmai-cache-v1';
-                    const urlsToCache = [
-                        'https://lookmaitaiton.github.io/transport/logo.png',
-                        'https://lookmaitaiton.github.io/transport/icon.jpg'
-                    ];
-
-                    self.addEventListener('install', (e) => { 
-                        self.skipWaiting(); 
-                        e.waitUntil(
-                            caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
-                        );
-                    });
-                    
-                    self.addEventListener('activate', (e) => { 
-                        e.waitUntil(self.clients.claim()); 
-                    });
-                    
-                    self.addEventListener('fetch', (e) => { 
-                        e.respondWith(
-                            caches.match(e.request).then((response) => {
-                                // ถ้ามีข้อมูลในแคช (เช่น โลโก้) ให้ดึงมาโชว์เลย ถ้าไม่มีให้โหลดจากเน็ต
-                                return response || fetch(e.request);
-                            }).catch(() => {
-                                // ดักจับกรณีเน็ตหลุด
-                                console.log("Offline mode triggered");
-                            })
-                        ); 
-                    });
-                `;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(console.error);
+                navigator.serviceWorker.register('https://lookmaitaiton.github.io/transport/sw.js')
+                .then(function() { console.log('✅ Service Worker OK!'); })
+                .catch(function(err) { console.log('❌ Service Worker Error:', err); });
             });
         }
     </script>
